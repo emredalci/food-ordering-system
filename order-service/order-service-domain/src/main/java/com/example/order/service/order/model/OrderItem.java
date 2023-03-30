@@ -24,7 +24,7 @@ public class OrderItem {
 
     boolean isPriceValid() {
         return price.isGreaterThanZero() &&
-                price.equals(product.price()) &&
+                price.equals(product.getPrice()) &&
                 price.multiply(quantity).equals(subTotal);
     }
 }
