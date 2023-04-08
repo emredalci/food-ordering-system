@@ -1,6 +1,6 @@
 package com.example.order.service.order.model;
 
-import com.example.order.service.common.exception.OrderDomainException;
+import com.example.order.service.common.exception.OrderServiceBusinessException;
 import com.example.order.service.common.model.Money;
 import com.example.order.service.common.model.StreetAddress;
 import lombok.Builder;
@@ -14,6 +14,9 @@ import java.util.concurrent.atomic.AtomicLong;
 @Builder
 @Getter
 public final class Order {
+
+    public static final String FAILURE_MESSAGE_DELIMITER = ",";
+
     private UUID id;
     private final UUID customerId;
     private final UUID restaurantId;
@@ -26,21 +29,21 @@ public final class Order {
 
     public void pay(){
         if (Boolean.FALSE.equals(orderStatus.equals(OrderStatus.PENDING))){
-            throw new OrderDomainException("invalid.order.status.for.pay");
+            throw new OrderServiceBusinessException("invalid.order.status.for.pay");
         }
         orderStatus = OrderStatus.PAID;
     }
 
     public void approve() {
         if(Boolean.FALSE.equals(orderStatus.equals(OrderStatus.PAID))) {
-            throw new OrderDomainException("invalid.order.status.for.approve");
+            throw new OrderServiceBusinessException("invalid.order.status.for.approve");
         }
         orderStatus = OrderStatus.APPROVED;
     }
 
     public void initCancel(List<String> failureMessages) {
         if (Boolean.FALSE.equals(orderStatus.equals(OrderStatus.PAID))) {
-            throw new OrderDomainException("invalid.order.status.for.init.cancel");
+            throw new OrderServiceBusinessException("invalid.order.status.for.init.cancel");
         }
         orderStatus = OrderStatus.CANCELLING;
         updateFailureMessages(failureMessages);
@@ -48,19 +51,10 @@ public final class Order {
 
     public void cancel(List<String> failureMessages) {
         if (Boolean.FALSE.equals(orderStatus.equals(OrderStatus.CANCELLING) || orderStatus.equals(OrderStatus.PENDING))) {
-            throw new OrderDomainException("invalid.order.status.for.cancel");
+            throw new OrderServiceBusinessException("invalid.order.status.for.cancel");
         }
         orderStatus = OrderStatus.CANCELLED;
         updateFailureMessages(failureMessages);
-    }
-
-    private void updateFailureMessages(List<String> failureMessages) {
-        if (Objects.nonNull(this.failureMessages) && Objects.nonNull(failureMessages)) {
-            this.failureMessages.addAll(failureMessages.stream().filter(message -> Boolean.FALSE.equals(message.isEmpty())).toList());
-        }
-        if (Objects.isNull(this.failureMessages)) {
-            this.failureMessages = failureMessages;
-        }
     }
 
     public void initializeOrder(){
@@ -76,6 +70,15 @@ public final class Order {
         validateItemsPrice();
     }
 
+    private void updateFailureMessages(List<String> failureMessages) {
+        if (Objects.nonNull(this.failureMessages) && Objects.nonNull(failureMessages)) {
+            this.failureMessages.addAll(failureMessages.stream().filter(message -> Boolean.FALSE.equals(message.isEmpty())).toList());
+        }
+        if (Objects.isNull(this.failureMessages)) {
+            this.failureMessages = failureMessages;
+        }
+    }
+
     private void validateItemsPrice() {
         Money orderItemsTotal = getItems().stream().map(orderItem -> {
             validateItemPrice(orderItem);
@@ -83,25 +86,25 @@ public final class Order {
         }).reduce(Money.ZERO, Money::add);
 
         if (Boolean.FALSE.equals(getPrice().equals(orderItemsTotal))){
-            throw new OrderDomainException("total.price.not.equal.order.items.total.price");
+            throw new OrderServiceBusinessException("total.price.not.equal.order.items.total.price");
         }
     }
 
     private void validateItemPrice(OrderItem orderItem) {
         if (Boolean.FALSE.equals(orderItem.isPriceValid())){
-            throw new OrderDomainException("invalid.order.item.price");
+            throw new OrderServiceBusinessException("invalid.order.item.price");
         }
     }
 
     private void validateInitialOrder() {
         if (Objects.nonNull(orderStatus) || Objects.nonNull(id)){
-            throw new OrderDomainException("order.not.correct.state");
+            throw new OrderServiceBusinessException("order.not.correct.state");
         }
     }
 
     private void validateTotalPrice() {
         if (Objects.isNull(price) || Boolean.FALSE.equals(price.isGreaterThanZero())){
-            throw new OrderDomainException("total.price.not.valid");
+            throw new OrderServiceBusinessException("total.price.not.valid");
         }
 
     }

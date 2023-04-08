@@ -1,7 +1,7 @@
 package com.example.order.service.order.service;
 
 import com.example.order.service.common.DomainComponent;
-import com.example.order.service.common.exception.OrderDomainException;
+import com.example.order.service.common.exception.OrderServiceBusinessException;
 import com.example.order.service.order.event.OrderCancelledEvent;
 import com.example.order.service.order.event.OrderCreatedEvent;
 import com.example.order.service.order.event.OrderPaidEvent;
@@ -55,7 +55,7 @@ public class OrderService {
 
     private void validateRestaurant(Restaurant restaurant) {
         if (Boolean.FALSE.equals(restaurant.isActive())){
-            throw new OrderDomainException("restaurant.not.active");
+            throw new OrderServiceBusinessException("restaurant.not.active");
         }
     }
 

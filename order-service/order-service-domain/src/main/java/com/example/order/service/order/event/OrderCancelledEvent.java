@@ -5,5 +5,5 @@ import com.example.order.service.order.model.Order;
 
 import java.time.ZonedDateTime;
 
-public record OrderCancelledEvent(Order order, ZonedDateTime createAt) implements DomainEvent<Order> {
+public record OrderCancelledEvent(Order order, ZonedDateTime createAt) implements DomainEvent {
 }

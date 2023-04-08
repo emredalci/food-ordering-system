@@ -1,7 +1,7 @@
 package com.example.order.service.common.usecase;
 
 import com.example.order.service.common.DomainComponent;
-import com.example.order.service.common.exception.OrderDomainException;
+import com.example.order.service.common.exception.OrderServiceBusinessException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
@@ -35,21 +35,21 @@ public class UseCasePublisherImpl implements UseCasePublisher{
     private <T extends UseCase, R> void validateUseCaseHandlerDetection(T useCase, UseCaseHandler<R, T> useCaseHandler) {
         if (Objects.isNull(useCaseHandler)){
             log.error("Use case handler cannot be detected for the use case: {}, handlers: {}", useCase, UseCaseHandlerRegistry.INSTANCE.getRegistryForUseCaseHandlers());
-            throw new OrderDomainException(ERROR_KEY);
+            throw new OrderServiceBusinessException(ERROR_KEY);
         }
     }
 
     private <T extends UseCase> void validateVoidUseCaseHandlerDetection(T useCase, VoidUseCaseHandler<T> voidUseCaseHandler) {
         if (Objects.isNull(voidUseCaseHandler)){
             log.error("Void use case handler cannot be detected for the use case: {}, handlers: {}", useCase, UseCaseHandlerRegistry.INSTANCE.getRegistryForVoidUseCaseHandlers());
-            throw new OrderDomainException(ERROR_KEY);
+            throw new OrderServiceBusinessException(ERROR_KEY);
         }
     }
 
     private <R> void validateNoUseCaseHandlerDetection(NoUseCaseHandler<R> noUseCaseHandler) {
         if (Objects.isNull(noUseCaseHandler)){
             log.error("Void use case handler cannot be detected for the handlers: {}", UseCaseHandlerRegistry.INSTANCE.getRegistryForNoUseCaseHandlers());
-            throw new OrderDomainException(ERROR_KEY);
+            throw new OrderServiceBusinessException(ERROR_KEY);
         }
     }
 

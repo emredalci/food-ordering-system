@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: order-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/order
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  cache:
+    type: redis
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+
+
+restaurant:
+  address: http://localhost:9090/v1
+
+adapters:
+  order:
+    noob-data-adapter: true
+  customer:
+    noob-data-adapter: true
+  restaurant:
+    noob-data-adapter: true
