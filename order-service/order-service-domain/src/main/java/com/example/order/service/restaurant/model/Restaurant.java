@@ -5,7 +5,7 @@ import com.example.order.service.product.model.Product;
 import java.util.List;
 import java.util.UUID;
 
-public final class Restaurant {
+public final class Restaurant { //TODO Record ?
     private final UUID id;
     private final List<Product> products;
     private boolean active;
