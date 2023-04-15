@@ -1,4 +1,4 @@
-package com.example.order.service.outbox.payment;
+package com.example.order.service.outbox.payment.model;
 
 import com.example.order.service.order.model.Order;
 import com.example.order.service.payment.model.PaymentOrderStatus;

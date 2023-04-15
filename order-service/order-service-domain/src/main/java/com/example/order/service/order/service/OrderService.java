@@ -8,7 +8,7 @@ import com.example.order.service.order.event.OrderPaidEvent;
 import com.example.order.service.order.model.Order;
 import com.example.order.service.order.model.OrderStatus;
 import com.example.order.service.outbox.OutboxStatus;
-import com.example.order.service.outbox.payment.PaymentPayload;
+import com.example.order.service.outbox.payment.model.PaymentPayload;
 import com.example.order.service.product.model.Product;
 import com.example.order.service.restaurant.model.Restaurant;
 import com.example.order.service.saga.SagaStatus;

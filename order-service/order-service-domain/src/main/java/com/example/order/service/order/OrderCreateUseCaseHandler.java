@@ -9,7 +9,7 @@ import com.example.order.service.order.model.Order;
 import com.example.order.service.order.port.OrderPort;
 import com.example.order.service.order.service.OrderService;
 import com.example.order.service.order.usecase.OrderCreateUseCase;
-import com.example.order.service.outbox.payment.port.PaymentOutboxPort;
+import com.example.order.service.outbox.payment.port.OutboxPaymentPort;
 import com.example.order.service.restaurant.model.Restaurant;
 import com.example.order.service.restaurant.port.RestaurantPort;
 import lombok.extern.slf4j.Slf4j;
@@ -26,17 +26,17 @@ public class OrderCreateUseCaseHandler extends RegisterHelper implements UseCase
     private final RestaurantPort restaurantPort;
     private final OrderService orderService;
     private final OrderPort orderPort;
-    private final PaymentOutboxPort paymentOutboxPort;
+    private final OutboxPaymentPort outboxPaymentPort;
 
     public OrderCreateUseCaseHandler(CustomerPort customerPort,
                                      RestaurantPort restaurantPort,
                                      OrderService orderService,
-                                     OrderPort orderPort, PaymentOutboxPort paymentOutboxPort) {
+                                     OrderPort orderPort, OutboxPaymentPort outboxPaymentPort) {
         this.restaurantPort = restaurantPort;
         this.customerPort = customerPort;
         this.orderService = orderService;
         this.orderPort = orderPort;
-        this.paymentOutboxPort = paymentOutboxPort;
+        this.outboxPaymentPort = outboxPaymentPort;
         register(OrderCreateUseCase.class, this);
     }
 
@@ -48,7 +48,7 @@ public class OrderCreateUseCaseHandler extends RegisterHelper implements UseCase
         Order order = useCase.toOrder();
         OrderCreatedEvent orderCreatedEvent = orderService.validateAndInitiateOrder(order, restaurant);
         Order savedOrder = orderPort.save(useCase);
-        paymentOutboxPort.save(orderCreatedEvent);
+        outboxPaymentPort.save(orderCreatedEvent);
         return savedOrder;
     }
 

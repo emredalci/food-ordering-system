@@ -28,7 +28,7 @@ public class OrderController extends BaseController {
         Order order = publish(Order.class, request.toUseCase());
         OrderCreateResponse response = OrderCreateResponse.fromModel(order);
 
-        log.info("Order created with tracking id: {}", response);
+        log.info("Order created with tracking id: {}", response.orderTrackingId());
         return respond(response);
 
     }

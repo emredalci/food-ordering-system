@@ -5,7 +5,9 @@ import com.example.order.service.outbox.OutboxStatus;
 import com.example.order.service.saga.SagaStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -14,7 +16,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Table(name = "payment_outbox")
-public class PaymentOutboxEntity {
+@Getter
+@Setter
+public class OutboxPaymentEntity {
 
     @Id
     private UUID id;
