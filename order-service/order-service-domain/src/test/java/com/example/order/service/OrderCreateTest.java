@@ -5,6 +5,7 @@ import com.example.order.service.adapters.CustomerFakeAdapter;
 import com.example.order.service.adapters.OrderFakeAdapter;
 import com.example.order.service.adapters.OutboxPaymentFakeAdapter;
 import com.example.order.service.adapters.RestaurantFakeAdapter;
+import com.example.order.service.common.exception.OrderServiceBusinessException;
 import com.example.order.service.common.model.Money;
 import com.example.order.service.common.model.StreetAddress;
 import com.example.order.service.order.OrderCreateUseCaseHandler;
@@ -26,6 +27,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OrderCreateTest {
@@ -76,8 +78,63 @@ class OrderCreateTest {
                 () -> assertTrue(Objects.isNull(order.getFailureMessages()))
         );
 
+    }
 
+    @Test
+    void Should_Throw_Exception_When_Wrong_Price() {
+        //GIVEN
+        OrderItem item1 = buildOrderItem(UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb48"),
+                1,
+                new Money(new BigDecimal("50.00")),
+                new Money(new BigDecimal("50.00")));
 
+        OrderItem item2 = buildOrderItem(UUID.fromString("c05c5b14-ce68-4237-b4c0-4b95d397ac09"),
+                3,
+                new Money(new BigDecimal("50.00")),
+                new Money(new BigDecimal("150.00")));
+
+        OrderCreateUseCase orderCreateUseCase = buildOrderCreateUseCase(
+                UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb41"),
+                UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb45"),
+                new BigDecimal("250.00"),
+                List.of(item1, item2),
+                new StreetAddress(UUID.fromString("19cc9a3a-bd29-443f-a447-d221e1790641"), "street_1", "1000AB",
+                        "Amsterdam"));
+        String expectedErrorMessage = "total.price.not.equal.order.items.total.price";
+        //WHEN
+        //THEN
+        OrderServiceBusinessException exception = assertThrows(OrderServiceBusinessException.class,
+                () -> handler.handler(orderCreateUseCase));
+        assertEquals(expectedErrorMessage, exception.getMessage());
+
+    }
+
+    @Test
+    void Should_Throw_Exception_When_Wrong_Product_Price() {
+        //GIVEN
+        OrderItem item1 = buildOrderItem(UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb48"),
+                1,
+                new Money(new BigDecimal("60.00")),
+                new Money(new BigDecimal("60.00")));
+
+        OrderItem item2 = buildOrderItem(UUID.fromString("c05c5b14-ce68-4237-b4c0-4b95d397ac09"),
+                3,
+                new Money(new BigDecimal("50.00")),
+                new Money(new BigDecimal("150.00")));
+
+        OrderCreateUseCase orderCreateUseCase = buildOrderCreateUseCase(
+                UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb41"),
+                UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb45"),
+                new BigDecimal("250.00"),
+                List.of(item1, item2),
+                new StreetAddress(UUID.fromString("19cc9a3a-bd29-443f-a447-d221e1790641"), "street_1", "1000AB",
+                        "Amsterdam"));
+        String expectedErrorMessage = "invalid.order.item.price";
+        //WHEN
+        //THEN
+        OrderServiceBusinessException exception = assertThrows(OrderServiceBusinessException.class,
+                () -> handler.handler(orderCreateUseCase));
+        assertEquals(expectedErrorMessage, exception.getMessage());
     }
 
     private OrderItem buildOrderItem(UUID id, int quantity, Money price, Money subtotal) {
