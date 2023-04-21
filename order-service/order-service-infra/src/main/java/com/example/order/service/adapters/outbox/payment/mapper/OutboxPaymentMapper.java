@@ -13,7 +13,6 @@ public interface OutboxPaymentMapper {
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "sagaId", target = "sagaId")
-    @Mapping(source = "sagaId", target = "sagaId")
     @Mapping(source = "createdAt", target = "createdAt")
     @Mapping(source = "payload", target = "payload")
     @Mapping(source = "sagaStatus", target = "sagaStatus")
@@ -22,7 +21,6 @@ public interface OutboxPaymentMapper {
     OutboxPaymentEntity map(OrderCreatedEvent orderCreatedEvent);
 
     @Mapping(source = "id", target = "id")
-    @Mapping(source = "sagaId", target = "sagaId")
     @Mapping(source = "sagaId", target = "sagaId")
     @Mapping(source = "createdAt", target = "createdAt")
     @Mapping(source = "payload", target = "payload")

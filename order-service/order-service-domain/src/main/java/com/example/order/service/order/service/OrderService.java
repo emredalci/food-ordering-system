@@ -59,13 +59,13 @@ public class OrderService {
     }
 
     private void validateRestaurant(Restaurant restaurant) {
-        if (Boolean.FALSE.equals(restaurant.isActive())){
+        if (Boolean.FALSE.equals(restaurant.active())){
             throw new OrderServiceBusinessException("restaurant.not.active");
         }
     }
 
     private void setOrderProductInformation(Order order, Restaurant restaurant) {
-        Map<UUID, Product> restaurantProductMap = restaurant.getProducts()
+        Map<UUID, Product> restaurantProductMap = restaurant.products()
                 .stream()
                 .collect(Collectors.toMap(Product::getId, Function.identity()));
 

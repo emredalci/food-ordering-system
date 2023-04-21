@@ -47,9 +47,9 @@ public class OrderCreateUseCaseHandler extends RegisterHelper implements UseCase
         Restaurant restaurant = getRestaurantInformation(useCase);
         Order order = useCase.toOrder();
         OrderCreatedEvent orderCreatedEvent = orderService.validateAndInitiateOrder(order, restaurant);
-        Order savedOrder = orderPort.save(useCase);
+        orderPort.save(order);
         outboxPaymentPort.save(orderCreatedEvent);
-        return savedOrder;
+        return order;
     }
 
     private void checkCustomer(UUID customerId) {

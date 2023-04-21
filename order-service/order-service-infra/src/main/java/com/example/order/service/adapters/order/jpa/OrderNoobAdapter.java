@@ -2,7 +2,7 @@ package com.example.order.service.adapters.order.jpa;
 
 import com.example.order.service.order.model.Order;
 import com.example.order.service.order.port.OrderPort;
-import com.example.order.service.order.usecase.OrderCreateUseCase;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +12,8 @@ import java.util.UUID;
 @ConditionalOnProperty(name = "adapters.order.noob-data-adapter", havingValue = "true", matchIfMissing = false)
 public class OrderNoobAdapter implements OrderPort {
     @Override
-    public Order save(OrderCreateUseCase useCase) {
-        return useCase.toOrder();
+    public void save(Order order) {
+
     }
 
     @Override

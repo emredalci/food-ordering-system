@@ -8,9 +8,11 @@ import com.example.order.service.outbox.OutboxStatus;
 import com.example.order.service.outbox.payment.port.OutboxPaymentPort;
 import com.example.order.service.saga.SagaStatus;
 
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,6 +23,7 @@ public class OutboxPaymentDataAdapter implements OutboxPaymentPort {
 
     private final OutboxPaymentJpaRepository repository;
 
+    @Transactional
     @Override
     public void save(OrderCreatedEvent orderCreatedEvent) {
         OutboxPaymentEntity entity = OutboxPaymentMapper.INSTANCE.map(orderCreatedEvent);

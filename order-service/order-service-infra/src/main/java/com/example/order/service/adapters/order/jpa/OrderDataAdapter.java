@@ -6,12 +6,14 @@ import com.example.order.service.adapters.order.mapper.OrderMapper;
 import com.example.order.service.common.exception.OrderServiceBusinessException;
 import com.example.order.service.order.model.Order;
 import com.example.order.service.order.port.OrderPort;
-import com.example.order.service.order.usecase.OrderCreateUseCase;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -21,12 +23,10 @@ public class OrderDataAdapter implements OrderPort {
     private final OrderJpaRepository orderJpaRepository;
 
     @Override
-    public Order save(OrderCreateUseCase useCase) {
-        Order order = useCase.toOrder();
+    @Transactional
+    public void save(Order order) {
         OrderEntity orderEntity = OrderMapper.INSTANCE.map(order);
-        OrderEntity savedEntity = orderJpaRepository.save(orderEntity);
-        return OrderMapper.INSTANCE.map(savedEntity);
-
+        orderJpaRepository.save(orderEntity);
     }
 
     @Override
