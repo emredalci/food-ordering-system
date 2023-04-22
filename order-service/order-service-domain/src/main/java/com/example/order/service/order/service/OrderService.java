@@ -39,7 +39,7 @@ public class OrderService {
     public OrderPaidEvent payOrder(Order order) {
         order.pay();
         log.info("Order with id: {} is paid", order.getId());
-        return new OrderPaidEvent(order, ZonedDateTime.now(ZoneId.of("UTC")));
+        return new OrderPaidEvent(order, LocalDateTime.now());
     }
 
     public void approveOrder(Order order) {
@@ -77,7 +77,7 @@ public class OrderService {
         });
     }
 
-    private SagaStatus toSagaStatus(OrderStatus orderStatus) {
+    public SagaStatus toSagaStatus(OrderStatus orderStatus) {
         return switch (orderStatus) {
             case PENDING -> SagaStatus.STARTED;
             case PAID -> SagaStatus.PROCESSING;

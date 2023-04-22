@@ -3,6 +3,7 @@ package com.example.order.service.adapters.outbox.payment.jpa;
 import com.example.order.service.adapters.outbox.payment.jpa.entity.OutboxPaymentEntity;
 import com.example.order.service.adapters.outbox.payment.jpa.repository.OutboxPaymentJpaRepository;
 import com.example.order.service.adapters.outbox.payment.mapper.OutboxPaymentMapper;
+import com.example.order.service.common.exception.OrderServiceBusinessException;
 import com.example.order.service.order.event.OrderCreatedEvent;
 import com.example.order.service.outbox.OutboxStatus;
 import com.example.order.service.outbox.payment.port.OutboxPaymentPort;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,6 +51,15 @@ public class OutboxPaymentDataAdapter implements OutboxPaymentPort {
     @Override
     public void deleteByIdList(List<UUID> deleteReadyEventIdList) {
         repository.deleteByIdIn(deleteReadyEventIdList);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public OrderCreatedEvent getBySagaIdAndSagaStatus(UUID sagaId, SagaStatus... sagaStatus) {
+        return repository.findBySagaIdAndSagaStatusIn(sagaId, Arrays.asList(sagaStatus))
+                .map(OutboxPaymentMapper.INSTANCE::map)
+                .orElseThrow(() -> new OrderServiceBusinessException("not.found.outbox.payment.entity"));
+
     }
 
 }

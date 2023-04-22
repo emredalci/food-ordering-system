@@ -17,6 +17,11 @@ public class OrderNoobAdapter implements OrderPort {
     }
 
     @Override
+    public Order findById(UUID id) {
+        return null;
+    }
+
+    @Override
     public Order findByTrackingId(UUID trackingId) {
         return null;
     }

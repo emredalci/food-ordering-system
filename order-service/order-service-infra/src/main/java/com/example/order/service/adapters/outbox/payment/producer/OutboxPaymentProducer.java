@@ -1,4 +1,4 @@
-package com.example.order.service.adapters.outbox.payment.kafka;
+package com.example.order.service.adapters.outbox.payment.producer;
 
 import com.example.order.service.configuration.KafkaTopicNameConfiguration;
 import com.example.order.service.order.event.OrderCreatedEvent;
@@ -22,14 +22,14 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class OutboxPaymentProducer implements OutboxPaymentEventPort {
 
-    private final KafkaTopicNameConfiguration topicName;
+    private final KafkaTopicNameConfiguration nameConfiguration;
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Override
     @Transactional
     public void publish(OrderCreatedEvent event, BiConsumer<OrderCreatedEvent, OutboxStatus> callback) {
         CompletableFuture<SendResult<String, String>> result =
-                kafkaTemplate.send(topicName.getPaymentRequestTopicName(), event.getSagaId().toString(),
+                kafkaTemplate.send(nameConfiguration.getPaymentRequestTopicName(), event.getSagaId().toString(),
                         event.getPayload());
 
         result.whenComplete((complete, exception) -> {

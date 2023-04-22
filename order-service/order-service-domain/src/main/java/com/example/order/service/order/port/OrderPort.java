@@ -8,5 +8,7 @@ public interface OrderPort {
 
     void save(Order order);
 
+    Order findById(UUID id);
+
     Order findByTrackingId(UUID trackingId);
 }

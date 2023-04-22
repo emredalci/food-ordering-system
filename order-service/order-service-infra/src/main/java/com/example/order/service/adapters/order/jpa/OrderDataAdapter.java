@@ -30,8 +30,16 @@ public class OrderDataAdapter implements OrderPort {
     }
 
     @Override
+    public Order findById(UUID id) {
+        return orderJpaRepository.findById(id)
+                .map(OrderMapper.INSTANCE::map)
+                .orElseThrow(() -> new OrderServiceBusinessException("not.found.order"));
+    }
+
+    @Override
     public Order findByTrackingId(UUID trackingId) {
-        return orderJpaRepository.findByTrackingId(trackingId).map(OrderMapper.INSTANCE::map)
+        return orderJpaRepository.findByTrackingId(trackingId)
+                .map(OrderMapper.INSTANCE::map)
                 .orElseThrow(() -> new OrderServiceBusinessException("not.found.tracking.id"));
     }
 }

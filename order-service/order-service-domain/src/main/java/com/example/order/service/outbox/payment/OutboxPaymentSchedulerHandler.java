@@ -8,6 +8,9 @@ import com.example.order.service.outbox.OutboxStatus;
 import com.example.order.service.outbox.payment.model.OrderCreatedEventProcessedSize;
 import com.example.order.service.outbox.payment.port.OutboxPaymentEventPort;
 import com.example.order.service.outbox.payment.port.OutboxPaymentPort;
+
+import org.springframework.transaction.annotation.Transactional;
+
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -27,6 +30,7 @@ public class OutboxPaymentSchedulerHandler extends RegisterHelper implements NoU
     }
 
     @Override
+    @Transactional
     public OrderCreatedEventProcessedSize handle() {
         List<OrderCreatedEvent> events = outboxPaymentPort.getPublishReadyEvents();
         if (Boolean.TRUE.equals(events.isEmpty())) {

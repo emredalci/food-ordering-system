@@ -27,5 +27,5 @@ public interface OutboxPaymentMapper {
     @Mapping(source = "sagaStatus", target = "sagaStatus")
     @Mapping(source = "orderStatus", target = "orderStatus")
     @Mapping(source = "outboxStatus", target = "outboxStatus")
-    OrderCreatedEvent map(OutboxPaymentEntity entity); //TODO ?
+    OrderCreatedEvent map(OutboxPaymentEntity entity);
 }
