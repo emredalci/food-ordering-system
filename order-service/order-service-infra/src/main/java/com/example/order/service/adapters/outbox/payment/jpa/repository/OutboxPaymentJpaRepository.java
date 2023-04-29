@@ -16,8 +16,8 @@ public interface OutboxPaymentJpaRepository extends JpaRepository<OutboxPaymentE
 
     Optional<List<OutboxPaymentEntity>> findByOutboxStatusAndSagaStatusIn(OutboxStatus outboxStatus, List<SagaStatus> sagaStatusList);
 
-    @Query("select e.id from OutboxPaymentEntity e where e.orderStatus = :orderStatus and e.sagaStatus in (:sagaStatusList)")
-    Optional<List<UUID>> getDeleteReadyEventIdList(@Param("orderStatus") OutboxStatus outboxStatus,
+    @Query("select e.id from OutboxPaymentEntity e where e.outboxStatus = :outboxStatus and e.sagaStatus in (:sagaStatusList)")
+    Optional<List<UUID>> getDeleteReadyEventIdList(@Param("outboxStatus") OutboxStatus outboxStatus,
             @Param("sagaStatusList") List<SagaStatus> sagaStatusList);
 
     void deleteByIdIn(List<UUID> idList);

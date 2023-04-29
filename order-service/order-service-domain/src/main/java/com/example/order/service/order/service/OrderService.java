@@ -9,6 +9,7 @@ import com.example.order.service.order.model.Order;
 import com.example.order.service.order.model.OrderStatus;
 import com.example.order.service.outbox.OutboxStatus;
 import com.example.order.service.outbox.payment.model.PaymentPayload;
+import com.example.order.service.outbox.restaurant.model.RestaurantPayload;
 import com.example.order.service.product.model.Product;
 import com.example.order.service.restaurant.model.Restaurant;
 import com.example.order.service.saga.SagaStatus;
@@ -36,10 +37,11 @@ public class OrderService {
         return buildOrderCreatedEvent(order);
     }
 
-    public OrderPaidEvent payOrder(Order order) {
+    public OrderPaidEvent payOrder(Order order, UUID sagaId) {
         order.pay();
         log.info("Order with id: {} is paid", order.getId());
-        return new OrderPaidEvent(order, LocalDateTime.now());
+        SagaStatus sagaStatus = toSagaStatus((order.getOrderStatus()));
+        return buildOrderPaidEvent(order, sagaId, sagaStatus);
     }
 
     public void approveOrder(Order order) {
@@ -95,6 +97,18 @@ public class OrderService {
                 .payload(PaymentPayload.fromOrder(order).toString())
                 .orderStatus(order.getOrderStatus())
                 .sagaStatus(toSagaStatus(order.getOrderStatus()))
+                .outboxStatus(OutboxStatus.STARTED)
+                .build();
+    }
+
+    private OrderPaidEvent buildOrderPaidEvent(Order order, UUID sagaId, SagaStatus sagaStatus){
+        return OrderPaidEvent.builder()
+                .id(UUID.randomUUID())
+                .sagaId(sagaId)
+                .createdAt(LocalDateTime.now())
+                .payload(RestaurantPayload.fromOrder(order).toString())
+                .orderStatus(order.getOrderStatus())
+                .sagaStatus(sagaStatus)
                 .outboxStatus(OutboxStatus.STARTED)
                 .build();
     }

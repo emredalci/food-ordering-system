@@ -33,6 +33,7 @@ public class OutboxPaymentDataAdapter implements OutboxPaymentPort {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrderCreatedEvent> getPublishReadyEvents() {
         return repository.findByOutboxStatusAndSagaStatusIn(OutboxStatus.STARTED, List.of(SagaStatus.STARTED, SagaStatus.COMPENSATING))
                 .orElseGet(List::of)
@@ -42,6 +43,7 @@ public class OutboxPaymentDataAdapter implements OutboxPaymentPort {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UUID> getDeleteReadyEventIds() {
         return repository.getDeleteReadyEventIdList(OutboxStatus.COMPLETED, List.of(SagaStatus.SUCCEEDED,
                 SagaStatus.FAILED,SagaStatus.COMPENSATED))
@@ -49,6 +51,7 @@ public class OutboxPaymentDataAdapter implements OutboxPaymentPort {
     }
 
     @Override
+    @Transactional
     public void deleteByIdList(List<UUID> deleteReadyEventIdList) {
         repository.deleteByIdIn(deleteReadyEventIdList);
     }

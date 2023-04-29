@@ -10,6 +10,7 @@ import com.example.order.service.order.port.OrderPort;
 import com.example.order.service.order.service.OrderService;
 import com.example.order.service.outbox.payment.port.OutboxPaymentPort;
 import com.example.order.service.outbox.payment.usecase.OutboxPaymentListenerUseCase;
+import com.example.order.service.outbox.restaurant.port.OutboxRestaurantPort;
 import com.example.order.service.payment.model.PaymentStatus;
 import com.example.order.service.saga.SagaStatus;
 
@@ -25,14 +26,15 @@ public class OutboxPaymentListenerHandler extends RegisterHelper implements Void
 
     private final OutboxPaymentPort outboxPaymentPort;
     private final OrderPort orderPort;
-
     private final OrderService orderService;
+    private final OutboxRestaurantPort outboxRestaurantPort;
 
     public OutboxPaymentListenerHandler(OutboxPaymentPort outboxPaymentPort, OrderPort orderPort,
-            OrderService orderService) {
+                                        OrderService orderService, OutboxRestaurantPort outboxRestaurantPort) {
         this.outboxPaymentPort = outboxPaymentPort;
         this.orderPort = orderPort;
         this.orderService = orderService;
+        this.outboxRestaurantPort = outboxRestaurantPort;
         register(OutboxPaymentListenerUseCase.class, this);
     }
 
@@ -43,14 +45,13 @@ public class OutboxPaymentListenerHandler extends RegisterHelper implements Void
         if (paymentStatus.equals(PaymentStatus.COMPLETED)) {
             OrderCreatedEvent orderCreatedEvent = outboxPaymentPort.getBySagaIdAndSagaStatus(useCase.sagaId(), getSagaStatus(paymentStatus));
             Order order = orderPort.findById(useCase.orderId());
-            OrderPaidEvent orderPaidEvent = orderService.payOrder(order);
+            OrderPaidEvent orderPaidEvent = orderService.payOrder(order,orderCreatedEvent.getSagaId());
             orderPort.save(order);
-            SagaStatus sagaStatus = orderService.toSagaStatus(orderPaidEvent.order().getOrderStatus());
             orderCreatedEvent.setProcessedAt(LocalDateTime.now());
-            orderCreatedEvent.setOrderStatus(orderPaidEvent.order().getOrderStatus());
-            orderCreatedEvent.setSagaStatus(sagaStatus);
+            orderCreatedEvent.setOrderStatus(orderPaidEvent.getOrderStatus());
+            orderCreatedEvent.setSagaStatus(orderPaidEvent.getSagaStatus());
             outboxPaymentPort.save(orderCreatedEvent);
-            //TODO: save outbox restaurant
+            outboxRestaurantPort.save(orderPaidEvent);
             return;
 
         }
