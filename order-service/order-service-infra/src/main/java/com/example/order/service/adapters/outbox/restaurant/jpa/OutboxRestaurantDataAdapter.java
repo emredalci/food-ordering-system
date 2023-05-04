@@ -52,4 +52,9 @@ public class OutboxRestaurantDataAdapter implements OutboxRestaurantPort {
     public void deleteByIdList(List<UUID> ids) {
         repository.deleteByIdIn(ids);
     }
+
+    @Override
+    public OrderPaidEvent getBySagaIdAndSagaStatus(UUID sagaId, SagaStatus... sagaStatuses) {
+        return null;
+    }
 }

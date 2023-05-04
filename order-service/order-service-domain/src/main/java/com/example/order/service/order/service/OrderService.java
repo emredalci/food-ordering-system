@@ -52,7 +52,7 @@ public class OrderService {
     public OrderCancelledEvent cancelOrderPayment(Order order, List<String> failureMessages) {
         order.initCancel(failureMessages);
         log.info("Order payment is cancelling for order id: {}", order.getId());
-        return new OrderCancelledEvent(order, ZonedDateTime.now(ZoneId.of("UTC")));
+        return new OrderCancelledEvent(order.getOrderStatus(), LocalDateTime.now());
     }
 
     public void cancelOrder(Order order, List<String> failureMessages) {

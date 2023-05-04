@@ -1,4 +1,4 @@
-package com.example.order.service.adapters.outbox.restaurant;
+package com.example.order.service.adapters.outbox.restaurant.scheduler;
 
 import com.example.order.service.common.rest.BaseController;
 import com.example.order.service.outbox.restaurant.model.OrderPaidEventDeletedSize;
