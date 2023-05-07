@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
-public final class OrderCancelledEvent implements DomainEvent {
+public class OrderCancelledEvent implements DomainEvent {
     private final OrderStatus orderStatus;
     private final LocalDateTime createAt;
 

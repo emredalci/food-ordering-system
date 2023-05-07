@@ -67,7 +67,11 @@ public class OutboxPaymentListenerHandler extends RegisterHelper implements Void
             orderCreatedEvent.setSagaStatus(sagaStatus);
             outboxPaymentPort.save(orderCreatedEvent);
             if (PaymentStatus.CANCELLED.equals(paymentStatus)) {
-                //TODO save outbox restaurant
+                OrderPaidEvent orderPaidEvent = outboxRestaurantPort.getBySagaIdAndSagaStatus(useCase.sagaId(), SagaStatus.COMPENSATING);
+                orderPaidEvent.setProcessedAt(LocalDateTime.now());
+                orderPaidEvent.setOrderStatus(order.getOrderStatus());
+                orderPaidEvent.setSagaStatus(sagaStatus);
+                outboxRestaurantPort.save(orderPaidEvent);
             }
         }
     }

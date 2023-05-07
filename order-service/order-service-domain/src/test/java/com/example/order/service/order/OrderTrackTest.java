@@ -1,4 +1,4 @@
-package com.example.order.service;
+package com.example.order.service.order;
 
 import com.example.order.service.adapters.OrderFakeAdapter;
 import com.example.order.service.order.OrderTrackUseCaseHandler;
