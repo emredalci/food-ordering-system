@@ -1,0 +1,3 @@
+payment-service:
+  payment-request-topic-name: payment-request
+  payment-response-topic-name: payment-response
