@@ -1,6 +1,7 @@
 package com.example.payment.service.outbox.order.model;
 
 import com.example.payment.service.outbox.OutboxStatus;
+import com.example.payment.service.payment.event.PaymentEvent;
 import com.example.payment.service.payment.model.PaymentStatus;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,9 +16,23 @@ public class OutboxOrderMessage {
     private UUID sagaId;
     private LocalDateTime createdAt;
     private LocalDateTime processedAt;
-    private String type;
     private String payload;
     private PaymentStatus paymentStatus;
     private OutboxStatus outboxStatus;
-    private int version;
+
+    public static OutboxOrderMessage of(PaymentEvent event, String payload, UUID sagaId) {
+        return OutboxOrderMessage.builder()
+                .id(UUID.randomUUID())
+                .sagaId(sagaId)
+                .createdAt(event.getCreatedAt())
+                .processedAt(LocalDateTime.now())
+                .payload(payload)
+                .paymentStatus(event.getPayment().getPaymentStatus())
+                .outboxStatus(OutboxStatus.STARTED)
+                .build();
+    }
+
+    public void setOutboxStatus(OutboxStatus outboxStatus) {
+        this.outboxStatus = outboxStatus;
+    }
 }

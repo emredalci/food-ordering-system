@@ -18,4 +18,8 @@ public class CreditEntry {
         totalCreditAmount = totalCreditAmount.subtract(amount);
     }
 
+    public void addCreditAmount(Money amount) {
+        totalCreditAmount = totalCreditAmount.add(amount);
+    }
+
 }

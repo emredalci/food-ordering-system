@@ -1,8 +1,8 @@
 package com.example.payment.service.payment.service;
 
 import com.example.payment.service.common.DomainComponent;
-import com.example.payment.service.common.event.DomainEvent;
 import com.example.payment.service.common.model.Money;
+import com.example.payment.service.payment.event.PaymentCancelledEvent;
 import com.example.payment.service.payment.event.PaymentCompletedEvent;
 import com.example.payment.service.payment.event.PaymentEvent;
 import com.example.payment.service.payment.event.PaymentFailedEvent;
@@ -28,6 +28,19 @@ public class PaymentService {
         if (failureMessages.isEmpty()) {
             payment.updateStatus(PaymentStatus.COMPLETED);
             return PaymentCompletedEvent.of(payment);
+        }
+        payment.updateStatus(PaymentStatus.FAILED);
+        return PaymentFailedEvent.of(payment);
+    }
+
+    public PaymentEvent validateAndCancelPayment(Payment payment, CreditEntry creditEntry, List<CreditHistory> creditHistories) {
+        List<String> failureMessages = new ArrayList<>(1);
+        payment.validatePayment(failureMessages);
+        creditEntry.addCreditAmount(payment.getPrice());
+        creditHistories.add(buildCreditHistory(payment,TransactionType.CREDIT));
+        if (failureMessages.isEmpty()){
+            payment.updateStatus(PaymentStatus.CANCELLED);
+            return PaymentCancelledEvent.of(payment);
         }
         payment.updateStatus(PaymentStatus.FAILED);
         return PaymentFailedEvent.of(payment);

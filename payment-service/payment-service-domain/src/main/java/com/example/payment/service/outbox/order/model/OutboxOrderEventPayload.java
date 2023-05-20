@@ -1,5 +1,6 @@
 package com.example.payment.service.outbox.order.model;
 
+import com.example.payment.service.payment.event.PaymentEvent;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,4 +32,16 @@ public class OutboxOrderEventPayload {
 
     @JsonProperty
     private List<String> failureMessages;
+
+    public static OutboxOrderEventPayload of(PaymentEvent event) {
+        return OutboxOrderEventPayload.builder()
+                .paymentId(event.getPayment().getId().toString())
+                .customerId(event.getPayment().getCustomerId().toString())
+                .orderId(event.getPayment().getOrderId().toString())
+                .price(event.getPayment().getPrice().amount())
+                .paymentStatus(event.getPayment().getPaymentStatus().name())
+                .createdAt(event.getCreatedAt())
+                .failureMessages(event.getFailureMessages())
+                .build();
+    }
 }
