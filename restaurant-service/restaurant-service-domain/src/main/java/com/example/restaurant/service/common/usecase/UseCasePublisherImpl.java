@@ -1,8 +1,8 @@
-package com.example.payment.service.common.usecase;
+package com.example.restaurant.service.common.usecase;
 
 
-import com.example.payment.service.common.DomainComponent;
-import com.example.payment.service.common.exception.PaymentServiceBusinessException;
+import com.example.restaurant.service.common.DomainComponent;
+import com.example.restaurant.service.common.exception.RestaurantServiceBusinessException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
@@ -36,21 +36,21 @@ public class UseCasePublisherImpl implements UseCasePublisher{
     private <T extends UseCase, R> void validateUseCaseHandlerDetection(T useCase, UseCaseHandler<R, T> useCaseHandler) {
         if (Objects.isNull(useCaseHandler)){
             log.error("Use case handler cannot be detected for the use case: {}, handlers: {}", useCase, UseCaseHandlerRegistry.INSTANCE.getRegistryForUseCaseHandlers());
-            throw new PaymentServiceBusinessException(ERROR_KEY);
+            throw new RestaurantServiceBusinessException(ERROR_KEY);
         }
     }
 
     private <T extends UseCase> void validateVoidUseCaseHandlerDetection(T useCase, VoidUseCaseHandler<T> voidUseCaseHandler) {
         if (Objects.isNull(voidUseCaseHandler)){
             log.error("Void use case handler cannot be detected for the use case: {}, handlers: {}", useCase, UseCaseHandlerRegistry.INSTANCE.getRegistryForVoidUseCaseHandlers());
-            throw new PaymentServiceBusinessException(ERROR_KEY);
+            throw new RestaurantServiceBusinessException(ERROR_KEY);
         }
     }
 
     private <R> void validateNoUseCaseHandlerDetection(NoUseCaseHandler<R> noUseCaseHandler) {
         if (Objects.isNull(noUseCaseHandler)){
             log.error("Void use case handler cannot be detected for the handlers: {}", UseCaseHandlerRegistry.INSTANCE.getRegistryForNoUseCaseHandlers());
-            throw new PaymentServiceBusinessException(ERROR_KEY);
+            throw new RestaurantServiceBusinessException(ERROR_KEY);
         }
     }
 
